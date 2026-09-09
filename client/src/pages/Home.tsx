@@ -1,5 +1,6 @@
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { apiRequest } from '../lib/api'
 import { Wire, MicroLabel } from '../components/wireframe-primitives'
 import { fmt, pct } from '../components/wireframe-helpers'
 
@@ -11,16 +12,16 @@ const NAV_CATEGORIES = [
   'Computing', 'Phones & Tablets', 'Baby Products', 'Gaming', 'Sports & Fitness',
 ]
 
-const PRODUCTS = [
-  { id: 1,  name: 'iPhone 15 Pro Max 256GB',          price: 1_250_000, original: 1_560_000, cat: 'Electronics',    tag: 'PHONES & TABLETS'  },
-  { id: 2,  name: 'Samsung 55" QLED 4K Smart TV',      price: 448_000,   original: 680_000,   cat: 'Electronics',    tag: 'ELECTRONICS'       },
-  { id: 3,  name: 'HP EliteBook 840 G9 Laptop',        price: 895_000,   original: 1_100_000, cat: 'Computing',      tag: 'COMPUTING'         },
-  { id: 4,  name: 'Nike Air Max 270 React',             price: 64_000,    original: 85_000,    cat: 'Sports & Fitness', tag: 'SPORTS & FITNESS' },
-  { id: 5,  name: 'Ankara Midi Wrap Dress',             price: 19_500,    original: 26_000,    cat: 'Fashion',        tag: 'FASHION'           },
-  { id: 6,  name: 'Dyson V15 Detect Cordless Vacuum',  price: 378_000,   original: 420_000,   cat: 'Home & Kitchen', tag: 'HOME & KITCHEN'    },
-  { id: 7,  name: 'PlayStation 5 Disc Edition',         price: 550_000,   original: 720_000,   cat: 'Gaming',         tag: 'GAMING'            },
-  { id: 8,  name: 'Instant Pot Duo 7-in-1 6Qt',        price: 92_000,    original: 118_000,   cat: 'Home & Kitchen', tag: 'HOME & KITCHEN'    },
-]
+type Product = {
+  id: string
+  name: string
+  price: number
+  originalPrice: number
+  image: string
+  category: string
+  stock: number
+}
+
 
 const FLASH_DEALS = [
   { id: 9,  name: 'AirPods Pro (3rd Gen)',              price: 320_000,   original: 420_000,   tag: 'AUDIO'           },
@@ -57,6 +58,8 @@ const FOOTER_COLS = [
 function ProductCard({ name, price, original, tag }: {
   name: string; price: number; original: number; tag: string
 }) {
+  const hasDiscount = original > price
+
   return (
     <div className="border-t-2 border-black group cursor-pointer">
       <Wire h="h-32 sm:h-44" label="PRODUCT IMAGE" />
@@ -65,15 +68,20 @@ function ProductCard({ name, price, original, tag }: {
         <p className="text-[13px] font-semibold leading-snug line-clamp-2 mt-1">{name}</p>
         <div className="flex items-baseline gap-2 pt-1 flex-wrap">
           <span className="text-[15px] font-black">{fmt(price)}</span>
-          <span className="text-[11px] text-neutral-400 line-through">{fmt(original)}</span>
-          <span className="text-[9px] font-black bg-black text-white px-1.5 py-0.5">
-            -{pct(price, original)}%
-          </span>
+          {hasDiscount && (
+            <>
+              <span className="text-[11px] text-neutral-400 line-through">{fmt(original)}</span>
+              <span className="text-[9px] font-black bg-black text-white px-1.5 py-0.5">
+                -{pct(price, original)}%
+              </span>
+            </>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
 
 function DealCard({ name, price, original, tag }: {
   name: string; price: number; original: number; tag: string
@@ -113,10 +121,19 @@ function ArrivalCard({ name, price, tag }: { name: string; price: number; tag: s
 export default function Homepage() {
   const [activeNav, setActiveNav] = useState('All')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    apiRequest('/products')
+      .then(data => setProducts(data))
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false))
+  }, [])
 
   const filtered = activeNav === 'All'
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.cat === activeNav)
+    ? products
+    : products.filter(p => p.category === activeNav)
 
   return (
     <div
@@ -406,9 +423,19 @@ export default function Homepage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-            {(filtered.length > 0 ? filtered : PRODUCTS).map(p => (
-              <ProductCard key={p.id} name={p.name} price={p.price} original={p.original} tag={p.tag} />
-            ))}
+            
+  {loading ? (
+      <p className="text-center text-neutral-400 py-10">Loading products…</p>
+    ) : filtered.length === 0 ? (
+      <p className="text-center text-neutral-400 py-10">No products yet — check back soon.</p>
+    ) : (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+        {filtered.map(p => (
+      <ProductCard key={p.id} name={p.name} price={p.price} original={p.originalPrice} tag={p.category} />
+      ))}
+  </div>
+)}
+
           </div>
         </div>
       </section>
@@ -563,6 +590,16 @@ export default function Homepage() {
   )
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
