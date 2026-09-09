@@ -13,6 +13,11 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Name, email, and password are required' })
     }
 
+    const jwtSecret = process.env.JWT_SECRET
+      if (!jwtSecret) {
+    throw new Error('JWT_SECRET is not defined in environment variables')
+    }
+
     const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) {
       return res.status(409).json({ message: 'An account with this email already exists' })
@@ -47,7 +52,10 @@ export const login = async (req: Request, res: Response) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' })
     }
-
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET is not defined in environment variables')
+    }
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' })
