@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { apiRequest } from '../lib/api'
 import { Wire, MicroLabel } from '../components/wireframe-primitives'
 import { fmt, pct } from '../components/wireframe-helpers'
+import { Link } from 'react-router-dom'
 
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -55,13 +56,13 @@ const FOOTER_COLS = [
 
 // ─── Product Cards ────────────────────────────────────────────────────────────
 
-function ProductCard({ name, price, original, tag }: {
-  name: string; price: number; original: number; tag: string
+function ProductCard({ id, name, price, original, tag }: {
+  id: string; name: string; price: number; original: number; tag: string
 }) {
   const hasDiscount = original > price
 
   return (
-    <div className="border-t-2 border-black group cursor-pointer">
+  <Link to={`/products/${id}`} className="border-t-2 border-black group cursor-pointer block"> 
       <Wire h="h-32 sm:h-44" label="PRODUCT IMAGE" />
       <div className="p-3 space-y-1.5">
         <MicroLabel>{tag}</MicroLabel>
@@ -78,7 +79,7 @@ function ProductCard({ name, price, original, tag }: {
           )}
         </div>
       </div>
-    </div>
+  </Link>
   )
 }
 
@@ -394,7 +395,7 @@ export default function Homepage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {FLASH_DEALS.map(d => (
               <DealCard key={d.id} {...d} />
             ))}
@@ -422,17 +423,17 @@ export default function Homepage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             
   {loading ? (
       <p className="text-center text-neutral-400 py-10">Loading products…</p>
     ) : filtered.length === 0 ? (
       <p className="text-center text-neutral-400 py-10">No products yet — check back soon.</p>
     ) : (
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-        {filtered.map(p => (
-      <ProductCard key={p.id} name={p.name} price={p.price} original={p.originalPrice} tag={p.category} />
-      ))}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+     {filtered.map(p => (
+        <ProductCard key={p.id} id={p.id} name={p.name} price={p.price} original={p.originalPrice} tag={p.category} />
+     ))}
   </div>
 )}
 
@@ -487,7 +488,7 @@ export default function Homepage() {
               View All New
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {NEW_ARRIVALS.map(p => (
               <ArrivalCard key={p.id} {...p} />
             ))}
