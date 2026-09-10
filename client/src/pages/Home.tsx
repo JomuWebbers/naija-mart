@@ -4,14 +4,14 @@ import { apiRequest } from '../lib/api'
 import { Wire, MicroLabel } from '../components/wireframe-primitives'
 import { fmt, pct } from '../components/wireframe-helpers'
 import { Link } from 'react-router-dom'
-
+import { useOutletContext } from 'react-router-dom'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const NAV_CATEGORIES = [
-  'All', 'Electronics', 'Fashion', 'Home & Kitchen',
-  'Computing', 'Phones & Tablets', 'Baby Products', 'Gaming', 'Sports & Fitness',
-]
+// const NAV_CATEGORIES = [
+//   'All', 'Electronics', 'Fashion', 'Home & Kitchen',
+//   'Computing', 'Phones & Tablets', 'Baby Products', 'Gaming', 'Sports & Fitness',
+// ]
 
 type Product = {
   id: string
@@ -119,12 +119,15 @@ function ArrivalCard({ name, price, tag }: { name: string; price: number; tag: s
 
 // ─── Homepage ──────────────────────────────────────────────────────────────
 
+
 export default function Homepage() {
-  const [activeNav, setActiveNav] = useState('All')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { activeNav } = useOutletContext<{ activeNav: string }>()
+  
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+ 
 
+  
   useEffect(() => {
     apiRequest('/products')
       .then(data => setProducts(data))
@@ -136,156 +139,19 @@ export default function Homepage() {
     ? products
     : products.filter(p => p.category === activeNav)
 
+  
   return (
-    <div
-      className="bg-white text-black min-h-screen overflow-x-hidden"
-      style={{ fontFamily: "'Barlow', 'Helvetica Neue', Arial, sans-serif" }}
-    >
+    // <div
+    //   className="bg-white text-black min-h-screen overflow-x-hidden"
+    //   style={{ fontFamily: "'Barlow', 'Helvetica Neue', Arial, sans-serif" }}
+    // >
 
-      {/* ── Announcement Bar — secondary links hidden on mobile ─────────── */}
-      <div className="bg-black text-white py-2 px-4 md:px-8">
-        <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
-          <span className="text-[9px] md:text-[10px] tracking-[0.15em] md:tracking-[0.2em] uppercase font-semibold">
-            Free delivery on orders above ₦50,000
-          </span>
-          <div className="hidden md:flex items-center gap-6">
-            {['Sell on Naija Mart', 'Track Order', 'Help Center'].map(s => (
-              <button
-                key={s}
-                className="text-[10px] tracking-[0.18em] uppercase font-semibold text-neutral-400 hover:text-white transition-colors"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Header — logo + hamburger on mobile, full row from lg up ────── */}
-      <header className="border-b-2 border-black px-4 md:px-8 py-4 md:py-5">
-        <div className="max-w-screen-2xl mx-auto flex items-center justify-between lg:justify-start gap-4 lg:gap-10">
-
-          {/* Logo */}
-          <div className="shrink-0 flex flex-col">
-            <span
-              className="font-black uppercase leading-none"
-              style={{ fontSize: 24, letterSpacing: '-0.05em' }}
-            >
-              Naija Mart
-            </span>
-            <MicroLabel>Nigeria's Marketplace</MicroLabel>
-          </div>
-
-          {/* Delivery location — hidden below lg, same as original */}
-          <div className="shrink-0 hidden lg:flex flex-col cursor-pointer">
-            <MicroLabel>Deliver To</MicroLabel>
-            <span className="text-[13px] font-bold mt-0.5">Lagos, NG ▾</span>
-          </div>
-
-          {/* Search — full row on its own below header on mobile, inline from lg up */}
-          <div className="hidden lg:flex flex-1 border-2 border-black">
-            <select className="px-3 py-2.5 text-[11px] tracking-widest uppercase font-semibold bg-neutral-100 border-r-2 border-black outline-none cursor-pointer shrink-0">
-              <option>All</option>
-              <option>Electronics</option>
-              <option>Fashion</option>
-              <option>Computing</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Search products, brands and categories…"
-              className="flex-1 px-4 py-2.5 text-sm outline-none bg-transparent"
-            />
-            <button className="px-6 py-2.5 bg-black text-white text-[10px] tracking-[0.2em] uppercase font-bold shrink-0">
-              Search
-            </button>
-          </div>
-
-          {/* Account & Cart — condensed to icons-only on mobile via labels hidden */}
-          <div className="hidden lg:flex items-center gap-8 shrink-0">
-            <button className="flex flex-col items-start">
-              <MicroLabel>Account</MicroLabel>
-              <span className="text-[13px] font-bold mt-0.5">Sign In ▾</span>
-            </button>
-            <button className="flex flex-col items-start">
-              <MicroLabel>Returns</MicroLabel>
-              <span className="text-[13px] font-bold mt-0.5">& Orders</span>
-            </button>
-            <button className="flex flex-col items-start relative">
-              <MicroLabel>Shopping</MicroLabel>
-              <span className="text-[13px] font-bold mt-0.5">Cart (3)</span>
-            </button>
-          </div>
-
-          {/* Mobile: cart icon + hamburger */}
-          <div className="flex lg:hidden items-center gap-4 shrink-0">
-            <span className="text-[12px] font-bold">Cart (3)</span>
-            <button
-              onClick={() => setMobileMenuOpen(o => !o)}
-              className="w-8 h-8 border-2 border-black flex flex-col items-center justify-center gap-1"
-              aria-label="Menu"
-            >
-              <span className="w-4 h-0.5 bg-black" />
-              <span className="w-4 h-0.5 bg-black" />
-              <span className="w-4 h-0.5 bg-black" />
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile search row — always visible under the logo row on small screens */}
-        <div className="lg:hidden max-w-screen-2xl mx-auto mt-3 flex border-2 border-black">
-          <input
-            type="text"
-            placeholder="Search products…"
-            className="flex-1 px-3 py-2 text-sm outline-none bg-transparent"
-          />
-          <button className="px-4 py-2 bg-black text-white text-[10px] tracking-[0.2em] uppercase font-bold shrink-0">
-            Go
-          </button>
-        </div>
-
-        {/* Mobile dropdown menu — account, deliver-to, replicated from desktop */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden max-w-screen-2xl mx-auto mt-3 border-2 border-black divide-y-2 divide-black">
-            <div className="p-3 flex justify-between items-center">
-              <MicroLabel>Deliver To</MicroLabel>
-              <span className="text-[13px] font-bold">Lagos, NG ▾</span>
-            </div>
-            <div className="p-3 flex justify-between items-center">
-              <MicroLabel>Account</MicroLabel>
-              <span className="text-[13px] font-bold">Sign In ▾</span>
-            </div>
-            <div className="p-3 flex justify-between items-center">
-              <MicroLabel>Returns & Orders</MicroLabel>
-            </div>
-            {['Sell on Naija Mart', 'Track Order', 'Help Center'].map(s => (
-              <div key={s} className="p-3">
-                <span className="text-[11px] tracking-[0.15em] uppercase font-semibold">{s}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </header>
-
-      {/* ── Category Nav — horizontal scroll works at every width already ── */}
-      <nav className="border-b border-black/15 bg-neutral-50 px-4 md:px-8">
-        <div className="max-w-screen-2xl mx-auto flex items-center overflow-x-auto gap-0">
-          {NAV_CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveNav(cat)}
-              className={`shrink-0 px-4 py-3 text-[10px] tracking-[0.18em] uppercase font-semibold border-b-2 transition-none whitespace-nowrap ${
-                activeNav === cat
-                  ? 'border-black text-black'
-                  : 'border-transparent text-neutral-500 hover:text-black'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </nav>
-
+      <>
+      
+      
+      
       {/* ── Hero — stacked on mobile, side-by-side from md up ────────────── */}
+      
       <section className="border-b-2 border-black px-4 md:px-8 py-10 md:py-16">
         <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 
@@ -422,24 +288,20 @@ export default function Homepage() {
               View All
             </button>
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            
+        
   {loading ? (
       <p className="text-center text-neutral-400 py-10">Loading products…</p>
     ) : filtered.length === 0 ? (
       <p className="text-center text-neutral-400 py-10">No products yet — check back soon.</p>
     ) : (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-     {filtered.map(p => (
-        <ProductCard key={p.id} id={p.id} name={p.name} price={p.price} original={p.originalPrice} tag={p.category} />
-     ))}
-  </div>
-)}
-
-          </div>
-        </div>
-      </section>
+        {filtered.map(p => (
+          <ProductCard key={p.id} id={p.id} name={p.name} price={p.price} original={p.originalPrice} tag={p.category} />
+        ))}
+      </div>
+    )}
+    </div>
+  </section>
 
       {/* ── Promo Banner — stacked on mobile, side-by-side from md up ────── */}
       <section className="border-t-2 border-b-2 border-black bg-neutral-50 px-4 md:px-8 py-10 md:py-16">
@@ -587,7 +449,9 @@ export default function Homepage() {
           </div>
         </div>
       </footer>
-    </div>
+    </>
+
+    
   )
 
 }

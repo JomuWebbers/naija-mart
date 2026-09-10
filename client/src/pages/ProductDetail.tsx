@@ -4,6 +4,8 @@ import { useParams, Link } from 'react-router-dom'
 import { Wire, MicroLabel, Divider, PageShell } from '../components/wireframe-primitives'
 import { fmt, pct } from '../components/wireframe-helpers'
 import { apiRequest } from '../lib/api'
+import { useCart } from '../context/useCart'
+import toast from 'react-hot-toast'
 
 type product = {
   id: string
@@ -23,6 +25,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<product | null>(null)
   const [notFound, setNotFound] = useState(false)
   const [qty, setQty] = useState(1)
+  const { addToCart } = useCart()
 
 useEffect(() => {
   if (!id) return
@@ -46,6 +49,8 @@ if (!product) {
 }
 
   const hasDiscount = product.originalPrice > product.price
+ 
+
   return (
     <PageShell title="" breadcrumb="Home / Electronics / Phones & Tablets">
       {/* Responsive: stacked on mobile, side-by-side from md up */}
@@ -115,9 +120,17 @@ if (!product) {
                 +
               </button>
             </div>
-            <button className="flex-1 py-4 border-2 border-black text-[11px] tracking-[0.2em] uppercase font-black">
-              Add to Cart
-            </button>
+
+          <button
+  className="flex-1 py-4 border-2 border-black text-[11px] tracking-[0.2em] uppercase font-black"
+  onClick={() => {
+    addToCart({ id: product.id, name: product.name, price: product.price, image: product.image }, qty)
+    toast.success(`Added ${qty} to cart`)
+  }}
+>
+  Add to Cart
+</button>
+
             <button
               style={{ backgroundColor: 'var(--vermilion)' }}
               className="flex-1 py-4 text-white text-[11px] tracking-[0.2em] uppercase font-black"
