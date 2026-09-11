@@ -3,7 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import authRoutes from './routes/authRoutes'
 import productRoutes from './routes/productRoutes'
-
+import orderRoutes from './routes/orderRoutes'
 
 dotenv.config()
 
@@ -24,7 +24,7 @@ app.listen(PORT, () => {
 })
 
 app.use('/api/products', productRoutes)
-
+app.use('/api/orders', orderRoutes)
 
 
 
