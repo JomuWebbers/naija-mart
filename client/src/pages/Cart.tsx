@@ -87,12 +87,9 @@ export default function Cart() {
               <span>Total</span>
               <span>{fmt(total)}</span>
             </div>
-            <button
-              style={{ backgroundColor: 'var(--vermilion)' }}
-              className="w-full py-4 mt-5 text-white text-[11px] tracking-[0.2em] uppercase font-black"
-            >
+           <Link to="/checkout" style={{ backgroundColor: 'var(--vermilion)' }} className="w-full py-4 mt-5 text-white text-[11px] tracking-[0.2em] uppercase font-black block text-center">
               Proceed to Checkout
-            </button>
+          </Link>
           </div>
         </div>
       </div>
