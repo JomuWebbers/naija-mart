@@ -12,7 +12,7 @@ import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
 import { apiRequest } from "../lib/api";
 
-const STATES = ["Osun", "Lagos", "Oyo"];
+const STATES = ['Osun', 'Ogun', 'Lagos', 'Oyo']
 const CITIES_BY_STATE: Record<string, string[]> = {
   Lagos: [
     "Agege",
@@ -102,7 +102,14 @@ const CITIES_BY_STATE: Record<string, string[]> = {
     "Orolu",
     "Osogbo",
   ],
+   Ogun: [
+    'Abeokuta North', 'Abeokuta South', 'Ado-Odo/Ota', 'Egbado North', 'Egbado South',
+    'Ewekoro', 'Ifo', 'Ijebu East', 'Ijebu North', 'Ijebu North East', 'Ijebu Ode',
+    'Ikenne', 'Imeko Afon', 'Ipokia', 'Obafemi Owode', 'Odeda', 'Odogbolu',
+    'Ogun Waterside', 'Remo North', 'Shagamu',
+  ],
 };
+
 const PAYMENT_METHODS = ["Card (Paystack)", "Bank Transfer", "Pay on Delivery"];
 
 export default function Checkout() {

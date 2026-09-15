@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -39,7 +39,6 @@ export const getProductById = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to fetch product' })
   }
 }
-
 export const createProduct = async (req: Request, res: Response) => {
   try {
     const { name, description, price, originalPrice, image, category, stock } = req.body
@@ -54,10 +53,14 @@ export const createProduct = async (req: Request, res: Response) => {
 
     res.status(201).json(product)
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return res.status(409).json({ message: 'A product with this value already exists' })
+    }
     console.error(error)
     res.status(500).json({ message: 'Failed to create product' })
   }
 }
+
 
 export const updateProduct = async (req: Request, res: Response) => {
   try {

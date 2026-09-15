@@ -4,6 +4,10 @@ import dotenv from 'dotenv'
 import authRoutes from './routes/authRoutes'
 import productRoutes from './routes/productRoutes'
 import orderRoutes from './routes/orderRoutes'
+import deliveryPartnerRoutes from './routes/deliveryPartnerRoutes'
+import uploadRoutes from './routes/uploadRoutes'
+
+
 
 dotenv.config()
 
@@ -25,7 +29,7 @@ app.listen(PORT, () => {
 
 app.use('/api/products', productRoutes)
 app.use('/api/orders', orderRoutes)
-
-
+app.use('/api/delivery-partners', deliveryPartnerRoutes)
+app.use('/api/upload', uploadRoutes)
 
 

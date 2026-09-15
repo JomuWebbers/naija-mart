@@ -2,8 +2,65 @@
 import { Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import type { AuthRequest } from '../middleware/authMiddleware'
+import { LGA_COORDINATES, STATE_WAREHOUSE } from '../data/lgaCoordinates'
+
+function generateOtp(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString()
+}
 
 const prisma = new PrismaClient()
+
+
+export const assignDeliveryPartner = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params
+    const { deliveryPartnerId } = req.body
+
+    if (!id || Array.isArray(id)) {
+      return res.status(400).json({ message: 'Order id is required' })
+    }
+    if (!deliveryPartnerId) {
+      return res.status(400).json({ message: 'deliveryPartnerId is required' })
+    }
+
+    const order = await prisma.order.findUnique({ where: { id } })
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' })
+    }
+
+    const partner = await prisma.deliveryPartner.findUnique({ where: { id: deliveryPartnerId } })
+    if (!partner) {
+      return res.status(404).json({ message: 'Delivery partner not found' })
+    }
+
+    const shippingAddress = order.shippingAddress as { state?: string; city?: string }
+    const state = shippingAddress?.state
+    const startPoint = state ? STATE_WAREHOUSE[state] : undefined
+
+    if (!startPoint) {
+      return res.status(400).json({ message: 'No warehouse configured for this order\'s state' })
+    }
+
+    const history = Array.isArray(order.statusHistory) ? order.statusHistory : []
+
+    const updated = await prisma.order.update({
+      where: { id },
+      data: {
+        deliveryPartnerId,
+        deliveryOtp: generateOtp(),
+        liveLocation: startPoint,
+        status: 'Assigned',
+        statusHistory: [...history, { status: 'Assigned', at: new Date().toISOString() }],
+      },
+    })
+
+    res.json(updated)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to assign delivery partner' })
+  }
+}
+
 
 export const createOrder = async (req: AuthRequest, res: Response) => {
   try {
@@ -74,7 +131,7 @@ export const getOrderById = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'Order id is required' })
     }
 
-    const order = await prisma.order.findUnique({ where: { id } })
+    const order = await prisma.order.findUnique({ where: { id }, include: { deliveryPartner: true  } })
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' })

@@ -1,7 +1,7 @@
 const BASE_URL = 'http://localhost:5000/api'
 
 type RequestOptions = {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
   body?: unknown
   token?: string
 }
