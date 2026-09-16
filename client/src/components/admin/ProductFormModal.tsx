@@ -5,15 +5,9 @@ import { useAuth } from "../../context/useAuth";
 import { apiRequest } from "../../lib/api";
 
 const CATEGORY_OPTIONS = [
-  "Electronics",
-  "Fashion",
-  "Home & Kitchen",
-  "Computing",
-  "Phones & Tablets",
-  "Baby Products",
-  "Gaming",
-  "Sports & Fitness",
-];
+  'Electronics', 'Fashion', 'Home & Kitchen', 'Grocery',
+  'Phones & Tablets', 'Baby Products', 'Sports & Fitness',
+]
 
 export type Product = {
   id: string;

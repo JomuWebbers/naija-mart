@@ -5,8 +5,8 @@ import { MicroLabel } from './wireframe-primitives'
 import { useCart } from '../context/useCart'
 
 const NAV_CATEGORIES = [
-  'All', 'Electronics', 'Fashion', 'Home & Kitchen',
-  'Computing', 'Phones & Tablets', 'Baby Products', 'Gaming', 'Sports & Fitness',
+  'All', 'Electronics', 'Fashion', 'Home & Kitchen', 'Grocery',
+  'Phones & Tablets', 'Baby Products', 'Sports & Fitness',
 ]
 
 export default function Layout() {

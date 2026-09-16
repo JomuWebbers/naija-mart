@@ -55,16 +55,22 @@ const FOOTER_COLS = [
 ]
 
 // ─── Product Cards ────────────────────────────────────────────────────────────
-
-function ProductCard({ id, name, price, original, tag }: {
-  id: string; name: string; price: number; original: number; tag: string
+function ProductCard({ id, name, price, original, tag, image }: {
+  id: string; name: string; price: number; original: number; tag: string; image?: string
 }) {
   const hasDiscount = original > price
 
   return (
-  <Link to={`/products/${id}`} className="border-t-2 border-black group cursor-pointer block"> 
-      <Wire h="h-32 sm:h-44" label="PRODUCT IMAGE" />
+    <Link to={`/products/${id}`} className="border-t-2 border-black group cursor-pointer block">
+      {image ? (
+        <div className="h-32 sm:h-44 overflow-hidden bg-neutral-100">
+          <img src={image} alt={name} className="w-full h-full object-cover" />
+        </div>
+      ) : (
+        <Wire h="h-32 sm:h-44" label="PRODUCT IMAGE" />
+      )}
       <div className="p-3 space-y-1.5">
+        {/* ...unchanged... */}
         <MicroLabel>{tag}</MicroLabel>
         <p className="text-[13px] font-semibold leading-snug line-clamp-2 mt-1">{name}</p>
         <div className="flex items-baseline gap-2 pt-1 flex-wrap">
@@ -296,7 +302,7 @@ export default function Homepage() {
     ) : (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
         {filtered.map(p => (
-          <ProductCard key={p.id} id={p.id} name={p.name} price={p.price} original={p.originalPrice} tag={p.category} />
+          <ProductCard key={p.id} id={p.id} name={p.name} price={p.price} original={p.originalPrice} tag={p.category} image={p.image} />
         ))}
       </div>
     )}
