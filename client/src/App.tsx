@@ -16,6 +16,7 @@ import OrderTracking from "./pages/OrderTracking";
 import AdminRoute from "./components/AdminRoutes";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminLayout from "./components/admin/AdminLayout";
 
 function App() {
   return (
@@ -25,12 +26,14 @@ function App() {
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route element={<AdminRoute />}>
-          <Route
-            path="/admin"
-            element={<Navigate to="/admin/products" replace />}
-          />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route element={<AdminLayout />}>
+            <Route
+              path="/admin"
+              element={<Navigate to="/admin/products" replace />}
+            />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+          </Route>
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
