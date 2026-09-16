@@ -17,6 +17,8 @@ import AdminRoute from "./components/AdminRoutes";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminLayout from "./components/admin/AdminLayout";
+import AdminDeliveryPartners from './pages/admin/AdminDeliveryPartners'
+
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route element={<AdminRoute />}>
           <Route element={<AdminLayout />}>
+            <Route path="/admin/delivery-partners" element={<AdminDeliveryPartners />} />
             <Route
               path="/admin"
               element={<Navigate to="/admin/products" replace />}

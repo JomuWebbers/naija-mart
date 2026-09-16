@@ -1,11 +1,14 @@
 
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboardIcon, PackageIcon, ShoppingBagIcon, LogOutIcon, ShieldIcon } from 'lucide-react'
+import { LayoutDashboardIcon, PackageIcon, ShoppingBagIcon, TruckIcon, LogOutIcon, ShieldIcon } from 'lucide-react'
+
+
 
 const ADMIN_LINKS = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboardIcon, end: true },
   { to: '/admin/products', label: 'Products', icon: PackageIcon, end: false },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBagIcon, end: false },
+  { to: '/admin/delivery-partners', label: 'Delivery Partners', icon: TruckIcon, end: false },
 ]
 
 export default function AdminLayout() {
