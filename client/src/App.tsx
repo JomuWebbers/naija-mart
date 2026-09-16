@@ -3,7 +3,7 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from './assets/vite.svg'
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -18,6 +18,8 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDeliveryPartners from './pages/admin/AdminDeliveryPartners'
+import AdminDashboard from './pages/admin/AdminDashboard'
+
 
 
 function App() {
@@ -30,10 +32,8 @@ function App() {
         <Route element={<AdminRoute />}>
           <Route element={<AdminLayout />}>
             <Route path="/admin/delivery-partners" element={<AdminDeliveryPartners />} />
-            <Route
-              path="/admin"
-              element={<Navigate to="/admin/products" replace />}
-            />
+            <Route path="/admin" element={<AdminDashboard />} />
+
             <Route path="/admin/orders" element={<AdminOrders />} />
             <Route path="/admin/products" element={<AdminProducts />} />
           </Route>
