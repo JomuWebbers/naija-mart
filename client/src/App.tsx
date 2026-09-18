@@ -1,9 +1,4 @@
-// import { useState } from 'react'
-// import heroImg from './assets/hero.png'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from './assets/vite.svg'
-
-import { Routes, Route} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -19,8 +14,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDeliveryPartners from './pages/admin/AdminDeliveryPartners'
 import AdminDashboard from './pages/admin/AdminDashboard'
-
-
+import AdminSupportInbox from './pages/admin/AdminSupportInbox'
 
 function App() {
   return (
@@ -29,23 +23,28 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
-        <Route element={<AdminRoute />}>
-          <Route element={<AdminLayout />}>
-            <Route path="/admin/delivery-partners" element={<AdminDeliveryPartners />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders/:id" element={<OrderConfirmation />} />
+        <Route path="/track/:id" element={<OrderTracking />} />
+      </Route>
 
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/admin/products" element={<AdminProducts />} />
-          </Route>
+      <Route element={<AdminRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/delivery-partners" element={<AdminDeliveryPartners />} />
+          <Route path="/admin/support" element={<AdminSupportInbox />} />
         </Route>
       </Route>
+
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/orders/:id" element={<OrderConfirmation />} />
-      <Route path="/track/:id" element={<OrderTracking />} />
+      
     </Routes>
   );
 }
 
 export default App;
+
+

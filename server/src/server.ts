@@ -6,7 +6,7 @@ import productRoutes from './routes/productRoutes'
 import orderRoutes from './routes/orderRoutes'
 import deliveryPartnerRoutes from './routes/deliveryPartnerRoutes'
 import uploadRoutes from './routes/uploadRoutes'
-
+import streamRoutes from './routes/streamRoutes'
 
 
 dotenv.config()
@@ -31,5 +31,6 @@ app.use('/api/products', productRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/delivery-partners', deliveryPartnerRoutes)
 app.use('/api/upload', uploadRoutes)
+app.use('/api/chat', streamRoutes)
 
 

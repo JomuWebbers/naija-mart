@@ -4,6 +4,7 @@ import { MicroLabel } from "./wireframe-primitives";
 import { useCart } from "../context/useCart";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import ChatWidget from "./ChatWidget";
 
 const NAV_CATEGORIES = [
   "All",
@@ -259,6 +260,9 @@ export default function Layout() {
       </nav>
 
       <Outlet context={{ activeNav }} />
+      <ChatWidget />
     </div>
   );
 }
+
+

@@ -26,44 +26,20 @@ export function Divider({ thick = false }: { thick?: boolean }) {
   return <div className={`w-full ${thick ? 'border-t-2 border-black' : 'border-t border-black/15'}`} />
 }
 
-// A tiny top strip + shell every inner page (not homepage) reuses, so the
-// wireframe "feels" like one product rather than disconnected screens.
-export function PageShell({
-  title,
-  breadcrumb,
-  children,
-}: {
-  title: string
-  breadcrumb: string
-  children: React.ReactNode
-}) {
+export function PageShell({ title, breadcrumb, children }: { title: string; breadcrumb: string; children: React.ReactNode }) {
   return (
-    <div
-      className="bg-white text-black min-h-screen overflow-x-hidden"
-      style={{ fontFamily: "'Barlow', 'Helvetica Neue', Arial, sans-serif" }}
-    >
-      <div className="border-b-2 border-black px-4 md:px-8 py-4 md:py-5">
-        <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
-          <span
-            className="font-black uppercase leading-none"
-            style={{ fontSize: 22, letterSpacing: '-0.05em' }}
-          >
-            Naija Mart
-          </span>
-          <MicroLabel>{breadcrumb}</MicroLabel>
-        </div>
-      </div>
-      <div className="px-4 md:px-8 py-8 md:py-12">
-        <div className="max-w-screen-2xl mx-auto">
-          <h1
-            className="font-black uppercase leading-none mb-8"
-            style={{ fontSize: 'clamp(24px, 3.5vw, 40px)', letterSpacing: '-0.03em' }}
-          >
+    <div className="px-4 md:px-8 py-8 md:py-12">
+      <div className="max-w-screen-2xl mx-auto">
+        {breadcrumb && <MicroLabel>{breadcrumb}</MicroLabel>}
+        {title && (
+          <h1 className="font-black uppercase leading-none mt-2 mb-8" style={{ fontSize: 'clamp(24px, 3.5vw, 40px)', letterSpacing: '-0.03em' }}>
             {title}
           </h1>
-          {children}
-        </div>
+        )}
+        {children}
       </div>
     </div>
   )
 }
+
+

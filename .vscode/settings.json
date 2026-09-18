@@ -1,5 +1,26 @@
-{
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+// {
+//     "editor.defaultFormatter": "esbenp.prettier-vscode",
+//     "editor.formatOnSave": true
 
+// }
+
+
+
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "json.schemas": [
+    {
+      "fileMatch": ["tsconfig.json", "tsconfig.*.json"],
+      "url": "https://json.schemastore.org/tsconfig.json"
+    },
+    {
+      "fileMatch": ["package.json"],
+      "url": "https://json.schemastore.org/package.json"
+    },
+    {
+      "fileMatch": [".eslintrc", ".eslintrc.json"],
+      "url": "https://json.schemastore.org/eslintrc.json"
+    }
+  ]
 }
