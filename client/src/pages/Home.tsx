@@ -38,13 +38,22 @@ const NEW_ARRIVALS = [
   { id: 16, name: 'DJI Mini 4 Pro Drone',               price: 780_000,   tag: 'ELECTRONICS'   },
 ]
 
+// const SHOWCASE_CATS = [
+//   { label: 'ELECTRONICS',    count: '4,200+' },
+//   { label: 'FASHION',        count: '12,800+' },
+//   { label: 'HOME & KITCHEN', count: '6,400+' },
+//   { label: 'COMPUTING',      count: '2,100+' },
+//   { label: 'GAMING',         count: '1,800+' },
+//   { label: 'SPORTS',         count: '3,600+' },
+// ]
+
 const SHOWCASE_CATS = [
-  { label: 'ELECTRONICS',    count: '4,200+' },
-  { label: 'FASHION',        count: '12,800+' },
-  { label: 'HOME & KITCHEN', count: '6,400+' },
-  { label: 'COMPUTING',      count: '2,100+' },
-  { label: 'GAMING',         count: '1,800+' },
-  { label: 'SPORTS',         count: '3,600+' },
+  { label: 'Cars & Trucks',   sub: 'Buy · Sell · Hire'      },
+  { label: 'Property',        sub: 'Rent · Sale · Land'     },
+  { label: 'Phones & Tablets',sub: 'New & Used'             },
+  { label: 'Electronics',     sub: 'TVs · Audio · Cameras'  },
+  { label: 'Fashion',         sub: 'Men · Women · Kids'     },
+  { label: 'Home & Garden',   sub: 'Furniture · Appliances' },
 ]
 
 const FOOTER_COLS = [
@@ -228,7 +237,7 @@ export default function Homepage() {
                 <div className="mt-3">
                   <MicroLabel>{sc.label}</MicroLabel>
                   <p className="text-[10px] tracking-widest uppercase text-neutral-300 font-medium mt-0.5">
-                    {sc.count} items
+                    {sc.sub} items
                   </p>
                 </div>
               </div>

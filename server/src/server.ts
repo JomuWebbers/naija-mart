@@ -23,14 +23,18 @@ app.get('/health', (req, res) => {
 
 app.use('/api/auth', authRoutes)
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
 
 app.use('/api/products', productRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/delivery-partners', deliveryPartnerRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/chat', streamRoutes)
+app.use(cors({ origin: ['https://naija-mart-five.vercel.app', 'http://localhost:5173'] }))
 
+export default app
 

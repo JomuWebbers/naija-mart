@@ -10,6 +10,7 @@ import {
 } from '../controllers/orderController'
 
 import { protect, isAdmin } from '../middleware/authMiddleware'
+import { verifyPayment } from '../controllers/paymentController'
 
 const router = Router()
 
@@ -22,6 +23,7 @@ router.get('/:id', protect, getOrderById)
 router.get('/', protect, isAdmin, getAllOrders)
 router.patch('/:id/status', protect, isAdmin, updateOrderStatus)
 router.patch('/:id/assign', protect, isAdmin, assignDeliveryPartner)
+router.patch('/:id/verify-payment', protect, verifyPayment)
 
 export default router
 

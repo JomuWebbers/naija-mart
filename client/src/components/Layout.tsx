@@ -7,14 +7,16 @@ import { useAuth } from "../context/useAuth";
 import ChatWidget from "./ChatWidget";
 
 const NAV_CATEGORIES = [
-  "All",
+  "Cars & Trucks",
+  "Property",
+  "Phones & Tablets",
   "Electronics",
   "Fashion",
-  "Home & Kitchen",
-  "Grocery",
-  "Phones & Tablets",
-  "Baby Products",
-  "Sports & Fitness",
+  "Home & Garden",
+  "Jobs",
+  "Services",
+  "Agriculture",
+  "Animals & Pets",
 ];
 
 export default function Layout() {
@@ -264,5 +266,3 @@ export default function Layout() {
     </div>
   );
 }
-
-

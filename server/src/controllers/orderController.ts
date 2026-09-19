@@ -92,7 +92,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
         total,
         status: 'Placed',
         statusHistory: [{ status: 'Placed', at: new Date().toISOString() }],
-        isPaid: paymentMethod !== 'Pay on Delivery',
+        isPaid: paymentMethod !== 'Pay on Delivery' && paymentMethod !== 'Card (Paystack)',
       },
     })
 
