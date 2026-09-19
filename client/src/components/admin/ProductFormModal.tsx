@@ -4,10 +4,28 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/useAuth";
 import { apiRequest } from "../../lib/api";
 
+// const CATEGORY_OPTIONS = [
+//   'Electronics', 'Fashion', 'Home & Kitchen', 'Grocery',
+//   'Phones & Tablets', 'Baby Products', 'Sports & Fitness',
+// ]
+
+
 const CATEGORY_OPTIONS = [
-  'Electronics', 'Fashion', 'Home & Kitchen', 'Grocery',
-  'Phones & Tablets', 'Baby Products', 'Sports & Fitness',
-]
+   "Electronics",
+  "Vehicles",
+  "Property",
+  "Phones & Tablets",
+  "Fashion",
+  "Home Furniture & Appliances",
+  "Jobs",
+  "Services",
+  "Food, Agriculture & Farming",
+  "Animals & Pets",
+  "Beauty & Personal Care",
+  "Repairs & Construction",
+  "Business & Industry"
+];
+
 
 export type Product = {
   id: string;

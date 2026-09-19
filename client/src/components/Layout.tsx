@@ -6,17 +6,35 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import ChatWidget from "./ChatWidget";
 
+// const NAV_CATEGORIES = [
+//   "All",
+//   "Cars & Trucks",
+//   "Property",
+//   "Phones & Tablets",
+//   "Electronics",
+//   "Fashion",
+//   "Home & Garden",
+//   "Jobs",
+//   "Services",
+//   "Agriculture",
+//   "Animals & Pets",
+// ];
+
 const NAV_CATEGORIES = [
-  "Cars & Trucks",
+  "All",
+  "Electronics",
+  "Vehicles",
   "Property",
   "Phones & Tablets",
-  "Electronics",
   "Fashion",
-  "Home & Garden",
+  "Home Furniture & Appliances",
   "Jobs",
   "Services",
-  "Agriculture",
+  "Food, Agriculture & Farming",
   "Animals & Pets",
+  "Beauty & Personal Care",
+  "Repairs & Construction",
+  "Business & Industry"
 ];
 
 export default function Layout() {
@@ -80,7 +98,7 @@ export default function Layout() {
               <option>All</option>
               <option>Electronics</option>
               <option>Fashion</option>
-              <option>Computing</option>
+              <option>Phones & Tablets</option>
             </select>
             <input
               type="text"

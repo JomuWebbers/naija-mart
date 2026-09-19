@@ -9,7 +9,7 @@ import { useOutletContext } from 'react-router-dom'
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 // const NAV_CATEGORIES = [
-//   'All', 'Electronics', 'Fashion', 'Home & Kitchen',
+//   'All', 'ELECTRONICS', 'Fashion', 'Home & Kitchen',
 //   'Computing', 'Phones & Tablets', 'Baby Products', 'Gaming', 'Sports & Fitness',
 // ]
 
@@ -38,23 +38,23 @@ const NEW_ARRIVALS = [
   { id: 16, name: 'DJI Mini 4 Pro Drone',               price: 780_000,   tag: 'ELECTRONICS'   },
 ]
 
-// const SHOWCASE_CATS = [
-//   { label: 'ELECTRONICS',    count: '4,200+' },
-//   { label: 'FASHION',        count: '12,800+' },
-//   { label: 'HOME & KITCHEN', count: '6,400+' },
-//   { label: 'COMPUTING',      count: '2,100+' },
-//   { label: 'GAMING',         count: '1,800+' },
-//   { label: 'SPORTS',         count: '3,600+' },
-// ]
-
 const SHOWCASE_CATS = [
-  { label: 'Cars & Trucks',   sub: 'Buy · Sell · Hire'      },
-  { label: 'Property',        sub: 'Rent · Sale · Land'     },
-  { label: 'Phones & Tablets',sub: 'New & Used'             },
-  { label: 'Electronics',     sub: 'TVs · Audio · Cameras'  },
-  { label: 'Fashion',         sub: 'Men · Women · Kids'     },
-  { label: 'Home & Garden',   sub: 'Furniture · Appliances' },
+  { label: 'ELECTRONICS',    count: '4,200+' },
+  { label: 'FASHION',        count: '12,800+' },
+  { label: 'HOME Furniture & Appliances', count: '6,400+' },
+  { label: 'PHONES & TABLET',      count: '2,100+' },
+  { label: 'Vehicles',         count: '1,800+' },
+  { label: 'PROPERTY',         count: '3,600+' },
 ]
+
+// const SHOWCASE_CATS = [
+//   { label: 'Cars & Trucks',   sub: 'Buy · Sell · Hire'      },
+//   { label: 'Property',        sub: 'Rent · Sale · Land'     },
+//   { label: 'Phones & Tablets',sub: 'New & Used'             },
+//   { label: 'ELECTRONICS',     sub: 'TVs · Audio · Cameras'  },
+//   { label: 'FASHION',         sub: 'Men · Women · Kids'     },
+//   { label: 'Home & Garden',   sub: 'Furniture · Appliances' },
+// ]
 
 const FOOTER_COLS = [
   { heading: 'Shop',    links: ['All Products', 'Flash Deals', 'New Arrivals', 'Best Sellers', 'Brand Store']  },
@@ -181,7 +181,7 @@ export default function Homepage() {
             </h1>
 
             <p className="text-[14px] md:text-[15px] text-neutral-600 font-medium max-w-sm mb-8 leading-relaxed">
-              Electronics, fashion, home essentials and more —
+              ELECTRONICS, fashion, home essentials and more —
               shipped fast to your door across all 36 states.
             </p>
 
@@ -237,7 +237,7 @@ export default function Homepage() {
                 <div className="mt-3">
                   <MicroLabel>{sc.label}</MicroLabel>
                   <p className="text-[10px] tracking-widest uppercase text-neutral-300 font-medium mt-0.5">
-                    {sc.sub} items
+                    {sc.count} items
                   </p>
                 </div>
               </div>
