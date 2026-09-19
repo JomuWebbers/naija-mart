@@ -35,5 +35,11 @@
     "prisma": "6.1.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
+  },
+  "allowScripts": {
+    "@prisma/client@6.1.0": true,
+    "@prisma/engines@6.1.0": true,
+    "prisma@6.1.0": true,
+    "stream-chat@9.53.0": true
   }
 }
