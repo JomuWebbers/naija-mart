@@ -11,6 +11,8 @@ import {
 
 import { protect, isAdmin } from '../middleware/authMiddleware'
 import { verifyPayment } from '../controllers/paymentController'
+import { payoutSeller } from '../controllers/orderController'
+
 
 const router = Router()
 
@@ -24,6 +26,8 @@ router.get('/', protect, isAdmin, getAllOrders)
 router.patch('/:id/status', protect, isAdmin, updateOrderStatus)
 router.patch('/:id/assign', protect, isAdmin, assignDeliveryPartner)
 router.patch('/:id/verify-payment', protect, verifyPayment)
+router.patch('/:orderId/items/:productId/payout', protect, isAdmin, payoutSeller)
+
 
 export default router
 

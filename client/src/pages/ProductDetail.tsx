@@ -22,6 +22,7 @@ type product = {
   stock: number;
   rating: number;
   reviewCount: number;
+  sellerId: string;
 };
 
 export default function ProductDetail() {
@@ -155,15 +156,7 @@ export default function ProductDetail() {
             <button
               className="flex-1 py-4 border-2 border-black text-[11px] tracking-[0.2em] uppercase font-black"
               onClick={() => {
-                addToCart(
-                  {
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                  },
-                  qty,
-                );
+               addToCart({ id: product.id, name: product.name, price: product.price, image: product.image, sellerId: product.sellerId }, qty)
                 toast.success(`Added ${qty} to cart`);
               }}
             >

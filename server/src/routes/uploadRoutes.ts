@@ -1,13 +1,25 @@
 
 import { Router } from 'express'
-import multer from 'multer'
-import { uploadImage } from '../controllers/uploadController'
+import {
+  getProducts, getProductById, createProduct, updateProduct, deleteProduct,
+  getMyListings, reviewListing,
+} from '../controllers/productController'
 import { protect, isAdmin } from '../middleware/authMiddleware'
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } })
 const router = Router()
 
-router.post('/', protect, isAdmin, upload.single('image'), uploadImage)
+// Public
+router.get('/', getProducts)
+router.get('/:id', getProductById)
+
+// Any logged-in user (marketplace listing submission + their own listings)
+router.post('/', protect, createProduct)
+router.get('/my-listings', protect, getMyListings)
+
+// Admin-only
+router.patch('/:id', protect, isAdmin, updateProduct)
+router.delete('/:id', protect, isAdmin, deleteProduct)
+router.patch('/:id/review', protect, isAdmin, reviewListing)
 
 export default router
 

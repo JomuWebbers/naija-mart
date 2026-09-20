@@ -12,7 +12,7 @@ import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
 import { apiRequest } from "../lib/api";
 
-const STATES = ['Osun', 'Ogun', 'Lagos', 'Oyo']
+const STATES = ["Osun", "Ogun", "Lagos", "Oyo"];
 const CITIES_BY_STATE: Record<string, string[]> = {
   Lagos: [
     "Agege",
@@ -102,11 +102,27 @@ const CITIES_BY_STATE: Record<string, string[]> = {
     "Orolu",
     "Osogbo",
   ],
-   Ogun: [
-    'Abeokuta North', 'Abeokuta South', 'Ado-Odo/Ota', 'Egbado North', 'Egbado South',
-    'Ewekoro', 'Ifo', 'Ijebu East', 'Ijebu North', 'Ijebu North East', 'Ijebu Ode',
-    'Ikenne', 'Imeko Afon', 'Ipokia', 'Obafemi Owode', 'Odeda', 'Odogbolu',
-    'Ogun Waterside', 'Remo North', 'Shagamu',
+  Ogun: [
+    "Abeokuta North",
+    "Abeokuta South",
+    "Ado-Odo/Ota",
+    "Egbado North",
+    "Egbado South",
+    "Ewekoro",
+    "Ifo",
+    "Ijebu East",
+    "Ijebu North",
+    "Ijebu North East",
+    "Ijebu Ode",
+    "Ikenne",
+    "Imeko Afon",
+    "Ipokia",
+    "Obafemi Owode",
+    "Odeda",
+    "Odogbolu",
+    "Ogun Waterside",
+    "Remo North",
+    "Shagamu",
   ],
 };
 
@@ -158,6 +174,8 @@ export default function Checkout() {
             name: i.name,
             price: i.price,
             qty: i.qty,
+            sellerId: i.sellerId,
+            payoutStatus: "pending",
           })),
           shippingAddress: { name, phone, address, city, state },
           paymentMethod: payment,
@@ -222,7 +240,7 @@ export default function Checkout() {
                       <option key={c}>{c}</option>
                     ))}
                   </select>
-                  
+
                   <select
                     value={state}
                     onChange={(e) => {

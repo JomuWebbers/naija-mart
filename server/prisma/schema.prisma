@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
@@ -19,6 +20,11 @@ model User {
   orders    Order[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+   accountBalance            Float    @default(0)
+  linkedBankAccountNumber   String?
+  linkedBankName            String?
+  isTrustedVendor           Boolean  @default(false)
+  trustedVendorRequestStatus String? @default("none")  // "none" | "pending" | "approved" | "rejected"
   products Product[]
 }
 

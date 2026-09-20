@@ -3,6 +3,7 @@ import { Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import type { AuthRequest } from '../middleware/authMiddleware'
 import { LGA_COORDINATES, STATE_WAREHOUSE } from '../data/lgaCoordinates'
+import { getStreamChatServer, streamUserId, streamDisplayName } from '../lib/stream'
 
 function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
@@ -196,6 +197,87 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
 }
 
 
+
+
+
+const PLATFORM_FEE_PERCENT = 10
+
+export const payoutSeller = async (req: AuthRequest, res: Response) => {
+  try {
+    const { orderId, productId } = req.params
+
+    if (!orderId || Array.isArray(orderId) || !productId || Array.isArray(productId)) {
+      return res.status(400).json({ message: 'orderId and productId are required' })
+    }
+
+    const order = await prisma.order.findUnique({ where: { id: orderId } })
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' })
+    }
+
+    const items = Array.isArray(order.items) ? (order.items as any[]) : []
+    const itemIndex = items.findIndex(i => i.productId === productId)
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ message: 'Item not found in this order' })
+    }
+
+    const item = items[itemIndex]
+
+    if (!item.sellerId) {
+      return res.status(400).json({ message: 'This item has no seller on record (likely an older order) and cannot be paid out' })
+    }
+    if (item.payoutStatus === 'paid') {
+      return res.status(409).json({ message: 'This item has already been paid out' })
+    }
+
+    const grossAmount = item.price * item.qty
+    const payoutAmount = grossAmount * (1 - PLATFORM_FEE_PERCENT / 100)
+
+    items[itemIndex] = { ...item, payoutStatus: 'paid' }
+
+    const [, seller] = await prisma.$transaction([
+      prisma.order.update({ where: { id: orderId }, data: { items } }),
+      prisma.user.update({
+        where: { id: item.sellerId },
+        data: { accountBalance: { increment: payoutAmount } },
+      }),
+    ])
+
+    // Send an automated chat message to the seller
+    try {
+      const admin = await prisma.user.findFirst({ where: { role: 'admin' } })
+      if (admin) {
+        const server = getStreamChatServer()
+        const sellerSid = streamUserId(seller.id)
+        const adminSid = streamUserId(admin.id)
+
+        await server.upsertUsers([
+          { id: sellerSid, name: seller.name },
+          { id: adminSid, name: streamDisplayName(admin.role, admin.name) },
+        ])
+
+        const channel = server.channel('messaging', `support-${seller.id}`, {
+          members: [sellerSid, adminSid],
+          created_by_id: adminSid,
+        })
+        await channel.create()
+        await channel.sendMessage({
+          text: 'Congratulations, your product has been sold and payment processing soon to be reflected on your dashboard for withdrawal.',
+          user_id: adminSid,
+        })
+      }
+    } catch (chatError) {
+      console.error('Failed to send payout chat notification:', chatError)
+      // Don't fail the whole payout if the chat message fails to send
+    }
+
+    res.json({ message: 'Seller paid out successfully', payoutAmount, sellerBalance: seller.accountBalance })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to process seller payout' })
+  }
+}
 
 
 

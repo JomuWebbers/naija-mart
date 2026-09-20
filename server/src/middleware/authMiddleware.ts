@@ -46,4 +46,27 @@ export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => 
   next()
 }
 
+export const optionalAuth = (req: AuthRequest, _res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next()
+  }
+  const token = authHeader.split(' ')[1]
+  const jwtSecret = process.env.JWT_SECRET
+  if (!token || !jwtSecret) {
+    return next()
+  }
+  try {
+    const decoded = jwt.verify(token, jwtSecret) as unknown as { userId: string; role: string }
+    req.userId = decoded.userId
+    req.userRole = decoded.role
+  } catch {
+    // invalid/expired token — proceed as an unauthenticated visitor rather than blocking
+  }
+  next()
+}
+
+
+
+
 

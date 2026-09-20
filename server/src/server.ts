@@ -7,7 +7,7 @@ import orderRoutes from './routes/orderRoutes'
 import deliveryPartnerRoutes from './routes/deliveryPartnerRoutes'
 import uploadRoutes from './routes/uploadRoutes'
 import streamRoutes from './routes/streamRoutes'
-
+import userRoutes from './routes/userRoutes'
 
 dotenv.config()
 
@@ -34,6 +34,7 @@ app.use('/api/orders', orderRoutes)
 app.use('/api/delivery-partners', deliveryPartnerRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/chat', streamRoutes)
+app.use('/api/users', userRoutes)
 app.use(cors({ origin: ['https://naija-mart-five.vercel.app', 'http://localhost:5173'] }))
 
 export default app

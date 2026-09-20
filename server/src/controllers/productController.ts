@@ -1,6 +1,7 @@
 
 import { Request, Response } from 'express'
 import { PrismaClient, Prisma } from '@prisma/client'
+import { AuthRequest } from '../middleware/authMiddleware'
 
 const prisma = new PrismaClient()
 
@@ -9,7 +10,10 @@ export const getProducts = async (req: Request, res: Response) => {
     const { category } = req.query
 
     const products = await prisma.product.findMany({
-      ...(category ? { where: { category: category as string } } : {}),
+      where: {
+        status: 'approved',
+        ...(category ? { category: category as string } : {}),
+      },
       orderBy: { createdAt: 'desc' },
     })
 
@@ -19,17 +23,23 @@ export const getProducts = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to fetch products' })
   }
 }
-export const getProductById = async (req: Request, res: Response) => {
+
+export const getProductById = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params
-
-      if (!id || Array.isArray(id)) {
+    if (!id || Array.isArray(id)) {
       return res.status(400).json({ message: 'Product id is required' })
     }
-    
-    const product = await prisma.product.findUnique({ where: { id } })
 
+    const product = await prisma.product.findUnique({ where: { id } })
     if (!product) {
+      return res.status(404).json({ message: 'Product not found' })
+    }
+
+    const isOwner = req.userId === product.sellerId
+    const isAdminUser = req.userRole === 'admin'
+
+    if (product.status !== 'approved' && !isOwner && !isAdminUser) {
       return res.status(404).json({ message: 'Product not found' })
     }
 
@@ -39,16 +49,32 @@ export const getProductById = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to fetch product' })
   }
 }
-export const createProduct = async (req: Request, res: Response) => {
+
+export const createProduct = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, price, originalPrice, image, category, stock } = req.body
+    const sellerId = req.userId
+    if (!sellerId) {
+      return res.status(401).json({ message: 'Not authorized' })
+    }
+
+    const {
+      name, description, price, originalPrice, image, images, category, subcategory, stock,
+      negotiable, fulfillmentMethod, sellerState, sellerLga, sellerAddress,
+      deliveryDays, chargesDeliveryFee, deliveryFeeAmount,
+    } = req.body
 
     if (!name || !price || !image || !category) {
       return res.status(400).json({ message: 'Name, price, image, and category are required' })
     }
 
+    const status = req.userRole === 'admin' ? 'approved' : 'pending'
+
     const product = await prisma.product.create({
-      data: { name, description, price, originalPrice, image, category, stock },
+      data: {
+        name, description, price, originalPrice, image, images, category, subcategory, stock,
+        sellerId, status, negotiable, fulfillmentMethod, sellerState, sellerLga, sellerAddress,
+        deliveryDays, chargesDeliveryFee, deliveryFeeAmount,
+      },
     })
 
     res.status(201).json(product)
@@ -62,7 +88,7 @@ export const createProduct = async (req: Request, res: Response) => {
 }
 
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params
 
@@ -82,7 +108,7 @@ export const updateProduct = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params
 
@@ -100,7 +126,51 @@ export const deleteProduct = async (req: Request, res: Response) => {
 }
 
 
+export const getMyListings = async (req: AuthRequest, res: Response) => {
+  try {
+    const sellerId = req.userId
+    if (!sellerId) {
+      return res.status(401).json({ message: 'Not authorized' })
+    }
 
+    const products = await prisma.product.findMany({
+      where: { sellerId },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    res.json(products)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to fetch your listings' })
+  }
+}
+
+export const reviewListing = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params
+    const { status } = req.body
+
+    if (!id || Array.isArray(id)) {
+      return res.status(400).json({ message: 'Product id is required' })
+    }
+    if (status !== 'approved' && status !== 'rejected') {
+      return res.status(400).json({ message: 'Status must be "approved" or "rejected"' })
+    }
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: { status },
+    })
+
+    res.json(product)
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return res.status(404).json({ message: 'Product not found' })
+    }
+    console.error(error)
+    res.status(500).json({ message: 'Failed to review listing' })
+  }
+}
 
 
 

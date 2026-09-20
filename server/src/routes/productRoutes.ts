@@ -1,4 +1,3 @@
-
 import { Router } from 'express'
 import {
   getProducts,
@@ -6,21 +5,28 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getMyListings,
+  reviewListing,
 } from '../controllers/productController'
-import { protect, isAdmin } from '../middleware/authMiddleware'
+import { protect, isAdmin, optionalAuth } from '../middleware/authMiddleware'
 
 const router = Router()
 
-// Public routes
+// Public
 router.get('/', getProducts)
-router.get('/:id', getProductById)
+router.get('/my-listings', protect, getMyListings)
+router.get('/:id', optionalAuth, getProductById)
 
-// Admin-only routes
-router.post('/', protect, isAdmin, createProduct)
+// Any logged-in user
+router.post('/', protect, createProduct)
+
+// Admin-only
 router.patch('/:id', protect, isAdmin, updateProduct)
 router.delete('/:id', protect, isAdmin, deleteProduct)
+router.patch('/:id/review', protect, isAdmin, reviewListing)
 
 export default router
+
 
 
 
