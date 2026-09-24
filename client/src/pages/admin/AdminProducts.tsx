@@ -92,7 +92,7 @@ export default function AdminProducts() {
                     <td className="px-6 py-4 text-zinc-600">{p.category}</td>
                     <td className="px-6 py-4 font-medium">₦{p.price.toLocaleString()}</td>
                     <td className="px-6 py-4">
-                      <span className={p.stock === 0 ? 'text-red-600 font-medium' : 'text-zinc-600'}>
+                      <span className={Number(p.stock) === 0 ? 'text-red-600 font-medium' : 'text-zinc-600'}>
                         {p.stock ?? 0}
                       </span>
                     </td>
