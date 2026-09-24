@@ -129,7 +129,7 @@ const CITIES_BY_STATE: Record<string, string[]> = {
 const PAYMENT_METHODS = ["Card (Paystack)", "Bank Transfer", "Pay on Delivery"];
 
 export default function Checkout() {
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal, clearCart, removeFromCart } = useCart();
   const { token } = useAuth();
   const navigate = useNavigate();
 
@@ -154,6 +154,7 @@ export default function Checkout() {
     );
   }
 
+  
   const handlePlaceOrder = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -165,21 +166,50 @@ export default function Checkout() {
     setPlacing(true);
 
     try {
+      // Re-fetch every cart item fresh from the backend before checkout,
+      // rather than trusting whatever's been cached in localStorage.
+      const freshResults = await Promise.all(
+        items.map((item) =>
+          apiRequest(`/products/${item.id}`)
+            .then((product) => ({ item, product }))
+            .catch(() => ({ item, product: null })),
+        ),
+      );
+
+      const unavailable = freshResults.filter((r) => !r.product);
+      if (unavailable.length > 0) {
+        unavailable.forEach((r) => {
+          removeFromCart(r.item.id);
+          toast.error(
+            `${r.item.name} is no longer available and was removed from your cart`,
+          );
+        });
+        setPlacing(false);
+        return;
+      }
+
+      const freshItems = freshResults.map((r) => ({
+        productId: r.product.id,
+        name: r.product.name,
+        price: r.product.price, // always the live price, not a stale cached one
+        qty: r.item.qty,
+        sellerId: r.product.sellerId, // always present now, never missing
+        payoutStatus: "pending",
+      }));
+
+      const freshSubtotal = freshItems.reduce(
+        (sum, i) => sum + i.price * i.qty,
+        0,
+      );
+
       const order = await apiRequest("/orders", {
         method: "POST",
         token: token ?? undefined,
         body: {
-          items: items.map((i) => ({
-            productId: i.id,
-            name: i.name,
-            price: i.price,
-            qty: i.qty,
-            sellerId: i.sellerId,
-            payoutStatus: "pending",
-          })),
+          items: freshItems,
           shippingAddress: { name, phone, address, city, state },
           paymentMethod: payment,
-          subtotal,
+          subtotal: freshSubtotal,
           deliveryFee,
         },
       });

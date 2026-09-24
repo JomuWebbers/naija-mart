@@ -1,57 +1,33 @@
-import { useEffect, useState } from "react";
-import type { Channel as StreamChannel } from "stream-chat";
+import { useState } from 'react'
 import {
-  Chat,
-  Channel,
-  Window,
-  ChannelHeader,
-  MessageList,
-  MessageComposer,
-} from "stream-chat-react";
-
-import { MessageCircleIcon, XIcon } from "lucide-react";
-import { useAuth } from "../context/useAuth";
-import { useChat } from "../context/useChat";
-import { apiRequest } from "../lib/api";
+  Chat, Channel, Window, ChannelHeader, MessageList, MessageComposer,
+} from 'stream-chat-react'
+import { MessageCircleIcon, XIcon } from 'lucide-react'
+import { useAuth } from '../context/useAuth'
+import { useChat } from '../context/useChat'
 
 export default function ChatWidget() {
-  const { user, token } = useAuth();
-  const { client, connecting } = useChat();
-  const [open, setOpen] = useState(false);
-  const [channel, setChannel] = useState<StreamChannel | null>(null);
+  const { user } = useAuth()
+  const { client, channel, connecting, unreadCount, markChatRead } = useChat()
+  const [open, setOpen] = useState(false)
 
-  
-  useEffect(() => {
-    if (!open || !client || !user || channel) return;
-
-    apiRequest("/chat/support-agent", { token: token ?? undefined })
-      .then(async ({ agentId }) => {
-        const streamUserId = `naijamart_${user.id}`;
-        const ch = client.channel("messaging", `support-${user.id}`, {
-          members: [streamUserId, agentId],
-        });
-        await ch.watch();
-        setChannel(ch);
-      })
-      .catch((err) => console.error("Failed to open support chat:", err));
-   
-  }, [open, client, user, token, channel]);
-
-  // Don't show the widget for logged-out visitors or for the admin
-  // (the admin uses a dedicated inbox page instead, built next)
-  if (!user || user.role === "admin") return null;
+  if (!user || user.role === 'admin') return null
 
   return (
     <>
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          setOpen(o => !o)
+          if (!open) markChatRead()
+        }}
         className="fixed bottom-5 right-5 z-40 size-14 rounded-full bg-black text-white flex items-center justify-center shadow-lg hover:bg-neutral-800 transition-colors"
         aria-label="Open help center chat"
       >
-        {open ? (
-          <XIcon className="size-6" />
-        ) : (
-          <MessageCircleIcon className="size-6" />
+        {open ? <XIcon className="size-6" /> : <MessageCircleIcon className="size-6" />}
+        {!open && unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">
+            {unreadCount > 9 ? '9+' : unreadCount}
+          </span>
         )}
       </button>
 
@@ -75,7 +51,11 @@ export default function ChatWidget() {
         </div>
       )}
     </>
-  );
+  )
 }
+
+
+
+
 
 

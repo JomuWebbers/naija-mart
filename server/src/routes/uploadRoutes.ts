@@ -1,25 +1,16 @@
+import { Router } from "express";
 
-import { Router } from 'express'
-import {
-  getProducts, getProductById, createProduct, updateProduct, deleteProduct,
-  getMyListings, reviewListing,
-} from '../controllers/productController'
-import { protect, isAdmin } from '../middleware/authMiddleware'
+import { protect, isAdmin } from "../middleware/authMiddleware";
+import multer from "multer";
+import { uploadImage } from "../controllers/uploadController";
 
-const router = Router()
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 
-// Public
-router.get('/', getProducts)
-router.get('/:id', getProductById)
+const router = Router();
 
-// Any logged-in user (marketplace listing submission + their own listings)
-router.post('/', protect, createProduct)
-router.get('/my-listings', protect, getMyListings)
+router.post("/", protect, isAdmin, upload.single("image"), uploadImage);
 
-// Admin-only
-router.patch('/:id', protect, isAdmin, updateProduct)
-router.delete('/:id', protect, isAdmin, deleteProduct)
-router.patch('/:id/review', protect, isAdmin, reviewListing)
-
-export default router
-
+export default router;

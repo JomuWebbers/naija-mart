@@ -15,6 +15,8 @@ import AdminLayout from "./components/admin/AdminLayout";
 import AdminDeliveryPartners from './pages/admin/AdminDeliveryPartners'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminSupportInbox from './pages/admin/AdminSupportInbox'
+import AdminUsers from './pages/admin/AdminUsers'
+
 
 function App() {
   return (
@@ -35,6 +37,7 @@ function App() {
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/admin/delivery-partners" element={<AdminDeliveryPartners />} />
           <Route path="/admin/support" element={<AdminSupportInbox />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
         </Route>
       </Route>
 

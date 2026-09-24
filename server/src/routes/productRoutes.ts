@@ -14,11 +14,13 @@ const router = Router()
 
 // Public
 router.get('/', getProducts)
-router.get('/my-listings', protect, getMyListings)
+
 router.get('/:id', optionalAuth, getProductById)
 
 // Any logged-in user
 router.post('/', protect, createProduct)
+router.get('/my-listings', protect, getMyListings)
+
 
 // Admin-only
 router.patch('/:id', protect, isAdmin, updateProduct)

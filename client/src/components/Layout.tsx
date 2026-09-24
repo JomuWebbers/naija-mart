@@ -5,37 +5,14 @@ import { useCart } from "../context/useCart";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import ChatWidget from "./ChatWidget";
+import { CATEGORY_NAMES } from '../data/categories'
+
 
 // const NAV_CATEGORIES = [
-//   "All",
-//   "Cars & Trucks",
-//   "Property",
-//   "Phones & Tablets",
-//   "Electronics",
-//   "Fashion",
-//   "Home & Garden",
-//   "Jobs",
-//   "Services",
-//   "Agriculture",
-//   "Animals & Pets",
-// ];
+//   'All', 'Electronics', 'Fashion', 'Home & Kitchen',
+//   'Computing', 'Phones & Tablets', 'Baby Products', 'Gaming', 'Sports & Fitness',
+// ]
 
-const NAV_CATEGORIES = [
-  "All",
-  "Electronics",
-  "Vehicles",
-  "Property",
-  "Phones & Tablets",
-  "Fashion",
-  "Home Furniture & Appliances",
-  "Jobs",
-  "Services",
-  "Food, Agriculture & Farming",
-  "Animals & Pets",
-  "Beauty & Personal Care",
-  "Repairs & Construction",
-  "Business & Industry"
-];
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -263,7 +240,7 @@ export default function Layout() {
       {/* Category Nav */}
       <nav className="border-b border-black/15 bg-neutral-50 px-4 md:px-8">
         <div className="max-w-screen-2xl mx-auto flex items-center overflow-x-auto gap-0">
-          {NAV_CATEGORIES.map((cat) => (
+          {CATEGORY_NAMES.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveNav(cat)}

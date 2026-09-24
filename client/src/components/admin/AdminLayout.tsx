@@ -1,6 +1,6 @@
 
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboardIcon, PackageIcon, ShoppingBagIcon, TruckIcon, MessageCircleIcon, LogOutIcon, ShieldIcon } from 'lucide-react'
+import { LayoutDashboardIcon, PackageIcon, ShoppingBagIcon, TruckIcon, MessageCircleIcon, UsersIcon, LogOutIcon, ShieldIcon } from 'lucide-react'
 
 
 const ADMIN_LINKS = [
@@ -8,6 +8,7 @@ const ADMIN_LINKS = [
   { to: '/admin/products', label: 'Products', icon: PackageIcon, end: false },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBagIcon, end: false },
   { to: '/admin/delivery-partners', label: 'Delivery Partners', icon: TruckIcon, end: false },
+  { to: '/admin/users', label: 'Users', icon: UsersIcon, end: false },
   { to: '/admin/support', label: 'Support Chat', icon: MessageCircleIcon, end: false },
 ]
 

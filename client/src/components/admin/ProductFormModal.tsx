@@ -3,39 +3,18 @@ import { XIcon, LoaderCircleIcon, UploadIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/useAuth";
 import { apiRequest } from "../../lib/api";
-
-// const CATEGORY_OPTIONS = [
-//   'Electronics', 'Fashion', 'Home & Kitchen', 'Grocery',
-//   'Phones & Tablets', 'Baby Products', 'Sports & Fitness',
-// ]
-
-
-const CATEGORY_OPTIONS = [
-   "Electronics",
-  "Vehicles",
-  "Property",
-  "Phones & Tablets",
-  "Fashion",
-  "Home Furniture & Appliances",
-  "Jobs",
-  "Services",
-  "Food, Agriculture & Farming",
-  "Animals & Pets",
-  "Beauty & Personal Care",
-  "Repairs & Construction",
-  "Business & Industry"
-];
-
+import { CATEGORIES, CATEGORY_NAMES } from "../../data/categories";
 
 export type Product = {
   id: string;
   name: string;
   description: string;
-  price: number;
-  originalPrice: number;
+  price: string;
+  originalPrice: string;
   image: string;
   category: string;
-  stock: number;
+  subcategory: string;
+  stock: string;
 };
 
 type Props = {
@@ -51,7 +30,8 @@ const EMPTY_FORM = {
   price: "",
   originalPrice: "",
   image: "",
-  category: CATEGORY_OPTIONS[0],
+  category: CATEGORY_NAMES[0],
+  subcategory: "",
   stock: "",
 };
 
@@ -76,6 +56,7 @@ export default function ProductFormModal({
         originalPrice: String(product.originalPrice || ""),
         image: product.image,
         category: product.category,
+        subcategory: product.subcategory || "",
         stock: String(product.stock || ""),
       };
     }
@@ -126,6 +107,7 @@ export default function ProductFormModal({
         originalPrice: form.originalPrice ? Number(form.originalPrice) : 0,
         image: imageUrl,
         category: form.category,
+        subCategory: form.subcategory,
         stock: form.stock ? Number(form.stock) : 0,
       };
 
@@ -186,26 +168,54 @@ export default function ProductFormModal({
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="border border-zinc-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             />
-            <select
+            {/* <select
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
               className="border border-zinc-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             >
-              {CATEGORY_OPTIONS.map((c) => (
+              {CATEGORY_NAMES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select> */}
+
+            <select
+              value={form.category}
+              onChange={(e) =>
+                setForm({ ...form, category: e.target.value, subcategory: "" })
+              }
+              className="border border-zinc-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
+            >
+              {CATEGORY_NAMES.map((c) => (
                 <option key={c} value={c}>
                   {c}
                 </option>
               ))}
             </select>
+            <select
+              value={form.subcategory}
+              onChange={(e) =>
+                setForm({ ...form, subcategory: e.target.value })
+              }
+              className="border border-zinc-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
+            >
+              <option value="">Select subcategory</option>
+              {CATEGORIES[form.category]?.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
             <input
-              type="number"
+              type="string"
               placeholder="Price (₦)"
               value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
               className="border border-zinc-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             />
             <input
-              type="number"
+              type="string"
               placeholder="Original price (optional, for discounts)"
               value={form.originalPrice}
               onChange={(e) =>
@@ -214,7 +224,7 @@ export default function ProductFormModal({
               className="border border-zinc-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
             />
             <input
-              type="number"
+              type="string"
               placeholder="Stock"
               value={form.stock}
               onChange={(e) => setForm({ ...form, stock: e.target.value })}

@@ -114,3 +114,78 @@ export const withdraw = async (req: AuthRequest, res: Response) => {
 }
 
 
+export const requestTrustedVendor = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId
+    if (!userId) {
+      return res.status(401).json({ message: 'Not authorized' })
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { trustedVendorRequestStatus: 'pending' },
+      select: { id: true, trustedVendorRequestStatus: true },
+    })
+
+    res.json(user)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to submit trusted vendor request' })
+  }
+}
+
+export const getUsers = async (req: AuthRequest, res: Response) => {
+  try {
+    const { trustedOnly, pendingOnly } = req.query
+
+    const users = await prisma.user.findMany({
+      where: {
+        role: 'customer',
+        ...(trustedOnly === 'true' ? { isTrustedVendor: true } : {}),
+        ...(pendingOnly === 'true' ? { trustedVendorRequestStatus: 'pending' } : {}),
+      },
+      select: {
+        id: true, name: true, email: true, phone: true,
+        accountBalance: true, isTrustedVendor: true, trustedVendorRequestStatus: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    res.json(users)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to fetch users' })
+  }
+}
+
+export const reviewTrustedVendorRequest = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params
+    const { approve } = req.body
+
+    if (!id || Array.isArray(id)) {
+      return res.status(400).json({ message: 'User id is required' })
+    }
+    if (typeof approve !== 'boolean') {
+      return res.status(400).json({ message: 'approve (true/false) is required' })
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        isTrustedVendor: approve,
+        trustedVendorRequestStatus: approve ? 'approved' : 'rejected',
+      },
+      select: { id: true, isTrustedVendor: true, trustedVendorRequestStatus: true },
+    })
+
+    res.json(user)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to review trusted vendor request' })
+  }
+}
+
+
+
