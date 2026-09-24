@@ -14,7 +14,8 @@ export type Product = {
   image: string;
   category: string;
   subcategory: string;
-  stock: string;
+  // stock: string;
+  stock?: number | null
 };
 
 type Props = {
