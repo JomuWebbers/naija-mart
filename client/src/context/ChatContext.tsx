@@ -12,7 +12,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    if (!user || !token || user.role === "admin") {
+    if (!user || !token) {
       return;
     }
 
@@ -31,6 +31,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         activeClient = chatClient;
         setClient(chatClient);
+        if (user.role === "admin") {
+  return;
+}
 
         const { agentId } = await apiRequest("/chat/support-agent", { token });
         const streamUserId = `naijamart_${user.id}`;

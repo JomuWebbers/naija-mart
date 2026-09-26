@@ -8,12 +8,12 @@ import { CATEGORIES, CATEGORY_NAMES } from "../../data/categories";
 export type Product = {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   price: string;
   originalPrice: string;
   image: string;
   category: string;
-  subcategory: string;
+  subcategory?: string;
   // stock: string;
   stock?: number | null
 };

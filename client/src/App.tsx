@@ -16,6 +16,8 @@ import AdminDeliveryPartners from './pages/admin/AdminDeliveryPartners'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminSupportInbox from './pages/admin/AdminSupportInbox'
 import AdminUsers from './pages/admin/AdminUsers'
+import SellProduct from './pages/SellProduct'
+import AdminListingReview from "./pages/admin/AdminListingReview";
 
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orders/:id" element={<OrderConfirmation />} />
         <Route path="/track/:id" element={<OrderTracking />} />
+        <Route path="/sell" element={<SellProduct />} />
       </Route>
 
       <Route element={<AdminRoute />}>
@@ -38,6 +41,7 @@ function App() {
           <Route path="/admin/delivery-partners" element={<AdminDeliveryPartners />} />
           <Route path="/admin/support" element={<AdminSupportInbox />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/listings" element={<AdminListingReview />} />
         </Route>
       </Route>
 
@@ -49,5 +53,4 @@ function App() {
 }
 
 export default App;
-
 

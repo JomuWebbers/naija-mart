@@ -4,6 +4,15 @@ import { TruckIcon, PackageCheckIcon, XIcon } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
 import { apiRequest } from "../../lib/api";
 
+type OrderItem = {
+  productId: string;
+  name: string;
+  price: number;
+  qty: number;
+  sellerId?: string;
+  payoutStatus?: string;
+};
+
 type Order = {
   id: string;
   total: number;
@@ -11,6 +20,7 @@ type Order = {
   deliveryPartnerId: string | null;
   deliveryPartner: { name: string; phone: string } | null;
   createdAt: string;
+  items: OrderItem[];
 };
 
 type Partner = {
@@ -47,6 +57,7 @@ export default function AdminOrders() {
     null,
   );
   const [selectedPartner, setSelectedPartner] = useState("");
+  const [payoutKey, setPayoutKey] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -89,6 +100,46 @@ export default function AdminOrders() {
       setSelectedPartner("");
     } catch {
       toast.error("Failed to assign delivery partner");
+    }
+  };
+
+  const handlePayout = async (orderId: string, item: OrderItem) => {
+    const key = `${orderId}:${item.productId}`;
+    setPayoutKey(key);
+
+    try {
+      const result = await apiRequest(
+        `/orders/${orderId}/items/${item.productId}/payout`,
+        {
+          method: "PATCH",
+          token: token ?? undefined,
+        },
+      );
+
+      setOrders((current) =>
+        current.map((order) =>
+          order.id !== orderId
+            ? order
+            : {
+                ...order,
+                items: order.items.map((orderItem) =>
+                  orderItem.productId === item.productId
+                    ? { ...orderItem, payoutStatus: "paid" }
+                    : orderItem,
+                ),
+              },
+        ),
+      );
+
+      toast.success(
+        `₦${Number(result.payoutAmount).toLocaleString()} credited to seller balance`,
+      );
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Seller payout failed",
+      );
+    } finally {
+      setPayoutKey(null);
     }
   };
 
@@ -138,6 +189,47 @@ export default function AdminOrders() {
                     <td className="px-6 py-4 font-medium">
                       ₦{order.total.toLocaleString()}
                     </td>
+                    <th className="px-6 py-4">Items / Seller Payout</th>
+                    <td className="px-6 py-4">
+                      <div className="space-y-3">
+                        {(order.items ?? []).map((item) => {
+                          const key = `${order.id}:${item.productId}`;
+
+                          return (
+                            <div key={item.productId} className="min-w-48">
+                              <p className="text-xs font-medium text-zinc-900">
+                                {item.name} × {item.qty}
+                              </p>
+                              <p className="text-[10px] text-zinc-500">
+                                ₦{(item.price * item.qty).toLocaleString()}
+                              </p>
+
+                              {!item.sellerId ? (
+                                <span className="text-[10px] text-zinc-400">
+                                  No seller recorded
+                                </span>
+                              ) : item.payoutStatus === "paid" ? (
+                                <span className="text-[10px] font-semibold text-green-700">
+                                  Seller credited
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handlePayout(order.id, item)}
+                                  disabled={payoutKey === key}
+                                  className="mt-1 rounded-lg bg-green-50 px-2.5 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-100 disabled:opacity-50"
+                                >
+                                  {payoutKey === key
+                                    ? "Crediting…"
+                                    : "Credit seller balance"}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </td>
+
                     <td className="px-6 py-4">
                       {order.deliveryPartner ? (
                         <div className="flex items-center gap-2">

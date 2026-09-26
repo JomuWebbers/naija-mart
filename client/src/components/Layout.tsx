@@ -5,14 +5,9 @@ import { useCart } from "../context/useCart";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import ChatWidget from "./ChatWidget";
-import { CATEGORY_NAMES } from '../data/categories'
-
-
-// const NAV_CATEGORIES = [
-//   'All', 'Electronics', 'Fashion', 'Home & Kitchen',
-//   'Computing', 'Phones & Tablets', 'Baby Products', 'Gaming', 'Sports & Fitness',
-// ]
-
+import { CATEGORY_NAMES } from "../data/categories";
+import SellerWallet from "./SellerWallet";
+import TrustedVendorRequest from "./TrustedVendorRequest";
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -40,7 +35,13 @@ export default function Layout() {
             Free delivery on orders above ₦50,000
           </span>
           <div className="hidden md:flex items-center gap-6">
-            {["Sell on Naija Mart", "Track Order", "Help Center"].map((s) => (
+            <Link
+              to="/sell"
+              className="text-[10px] tracking-[0.18em] uppercase font-semibold text-neutral-400 hover:text-white transition-colors"
+            >
+              Sell on Naija Mart
+            </Link>
+            {["Track Order", "Help Center"].map((s) => (
               <button
                 key={s}
                 className="text-[10px] tracking-[0.18em] uppercase font-semibold text-neutral-400 hover:text-white transition-colors"
@@ -108,6 +109,13 @@ export default function Layout() {
                           {user.email}
                         </p>
                       </div>
+                      {user.role !== "admin" && (
+                        <>
+                          <SellerWallet />
+                          <TrustedVendorRequest />
+                        </>
+                      )}
+
                       {user.role === "admin" && (
                         <Link
                           to="/admin"
@@ -226,7 +234,14 @@ export default function Layout() {
             <div className="p-3 flex justify-between items-center">
               <MicroLabel>Returns & Orders</MicroLabel>
             </div>
-            {["Sell on Naija Mart", "Track Order", "Help Center"].map((s) => (
+            <Link
+              to="/sell"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block p-3 text-[11px] tracking-[0.15em] uppercase font-semibold"
+            >
+              Sell on Naija Mart
+            </Link>
+            {["Track Order", "Help Center"].map((s) => (
               <div key={s} className="p-3">
                 <span className="text-[11px] tracking-[0.15em] uppercase font-semibold">
                   {s}

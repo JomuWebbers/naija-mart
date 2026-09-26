@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 type RequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -9,7 +9,7 @@ type RequestOptions = {
 export async function apiRequest(path: string, options: RequestOptions = {}) {
   const { method = 'GET', body, token } = options
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
@@ -24,6 +24,18 @@ export async function apiRequest(path: string, options: RequestOptions = {}) {
     throw new Error(data.message || 'Something went wrong')
   }
 
+  return data
+}
+
+export async function apiUpload(path: string, body: FormData, token?: string) {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body,
+  })
+
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || 'Upload failed')
   return data
 }
 

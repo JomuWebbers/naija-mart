@@ -10,6 +10,9 @@ import { fmt, pct } from "../components/wireframe-helpers";
 import { apiRequest } from "../lib/api";
 import { useCart } from "../context/useCart";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/useAuth";
+
+
 
 type product = {
   id: string;
@@ -31,6 +34,8 @@ export default function ProductDetail() {
   const [notFound, setNotFound] = useState(false);
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
+  const { user } = useAuth();
+
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +60,7 @@ export default function ProductDetail() {
     return <div className="p-10 text-center font-bold">Loading product…</div>;
   }
 
+  const isOwnListing = user?.id === product.sellerId;
   const hasDiscount = product.originalPrice > product.price;
 
   return (
@@ -156,9 +162,14 @@ export default function ProductDetail() {
             <button
               className="flex-1 py-4 border-2 border-black text-[11px] tracking-[0.2em] uppercase font-black"
               onClick={() => {
+               if (isOwnListing) {
+  toast.error(" You can’t purchase a listing you created.");
+  return;
+}
                addToCart({ id: product.id, name: product.name, price: product.price, image: product.image, sellerId: product.sellerId }, qty)
                 toast.success(`Added ${qty} to cart`);
               }}
+              disabled={isOwnListing}
             >
               Add to Cart
             </button>
@@ -166,6 +177,13 @@ export default function ProductDetail() {
             <button
               style={{ backgroundColor: "var(--vermilion)" }}
               className="flex-1 py-4 text-white text-[11px] tracking-[0.2em] uppercase font-black"
+              onClick={() => {
+                if (isOwnListing) {
+                  toast.error(" You can’t purchase a listing you created.");
+                  return;
+                }
+                // Handle "Buy Now" logic here
+              }}
             >
               Buy Now
             </button>
@@ -203,3 +221,6 @@ export default function ProductDetail() {
     </PageShell>
   );
 }
+
+
+

@@ -62,23 +62,75 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       price,
       originalPrice,
       image,
+      images,
       category,
-      subcategory,
+      subcategory: incomingSubcategory,
+      subCategory,
       stock,
+      negotiable,
+      fulfillmentMethod,
+      sellerState,
+      sellerLga,
+      sellerAddress,
+      deliveryDays,
+      chargesDeliveryFee,
+      deliveryFeeAmount,
     } = req.body;
 
-    if (!name || !price || !image || !category) {
+    const subcategory = incomingSubcategory ?? subCategory;
+
+    const numericPrice = Number(price);
+    const numericOriginalPrice = originalPrice === undefined || originalPrice === null || originalPrice === "" ? 0 : Number(originalPrice);
+    const numericStock = stock === undefined || stock === null || stock === "" ? 0 : Number(stock);
+    const numericDeliveryDays = deliveryDays === undefined || deliveryDays === null || deliveryDays === "" ? null : Number(deliveryDays);
+    const numericDeliveryFee = deliveryFeeAmount === undefined || deliveryFeeAmount === null || deliveryFeeAmount === "" ? 0 : Number(deliveryFeeAmount);
+    const imageList = Array.isArray(images) && images.length > 0 ? images : [image];
+
+    if (typeof name !== "string" || !name.trim() || !Number.isFinite(numericPrice) || numericPrice <= 0 || typeof image !== "string" || !image || typeof category !== "string" || !category) {
       return res
         .status(400)
         .json({ message: "Name, price, image, and category are required" });
+    }
+    if (!Number.isFinite(numericOriginalPrice) || numericOriginalPrice < 0 || !Number.isInteger(numericStock) || numericStock < 0) {
+      return res.status(400).json({ message: "Price and stock values must be valid positive amounts" });
+    }
+    if (!Array.isArray(imageList) || imageList.length > 5 || imageList.some((url) => typeof url !== "string" || !url)) {
+      return res.status(400).json({ message: "Provide up to five valid product image URLs" });
+    }
+    if (fulfillmentMethod && fulfillmentMethod !== "dropoff" && fulfillmentMethod !== "pickup") {
+      return res.status(400).json({ message: "Fulfillment method must be dropoff or pickup" });
+    }
+    if (fulfillmentMethod === "pickup" && (!sellerState || !sellerLga || !sellerAddress)) {
+      return res.status(400).json({ message: "Pickup state, LGA, and address are required" });
+    }
+    if ((numericDeliveryDays !== null && (!Number.isInteger(numericDeliveryDays) || numericDeliveryDays < 1)) || !Number.isFinite(numericDeliveryFee) || numericDeliveryFee < 0) {
+      return res.status(400).json({ message: "Delivery estimate and fee must be valid non-negative amounts" });
     }
 
     const status = req.userRole === "admin" ? "approved" : "pending";
 
     const product = await prisma.product.create({
       data: {
-        name, description, price, originalPrice, image, category, subcategory, stock,
-        sellerId, status,
+        // name,
+        name: name.trim(),
+        description,
+        price: numericPrice,
+        originalPrice: numericOriginalPrice,
+        image,
+        images: imageList,
+        category,
+        subcategory,
+        stock: numericStock,
+        negotiable: negotiable ?? "no",
+        fulfillmentMethod: fulfillmentMethod ?? "dropoff",
+        sellerState: sellerState || null,
+        sellerLga: sellerLga || null,
+        sellerAddress: sellerAddress || null,
+        deliveryDays: numericDeliveryDays,
+        chargesDeliveryFee: chargesDeliveryFee === true,
+        deliveryFeeAmount: numericDeliveryFee,
+        sellerId,
+        status,
       },
     })
 
@@ -232,3 +284,32 @@ export const reviewListing = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Failed to review listing" });
   }
 };
+
+
+export const getPendingListings = async (_req: AuthRequest, res: Response) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: { status: "pending" },
+      include: {
+        seller: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "asc" },
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch pending listings" });
+  }
+};
+
+
+
+

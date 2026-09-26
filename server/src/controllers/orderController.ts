@@ -75,6 +75,36 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: 'Order must contain at least one item' })
     }
+
+    const productIds = items.map((item: { productId?: unknown }) => item?.productId);
+
+if (productIds.some((id: unknown) => typeof id !== "string")) {
+  return res.status(400).json({ message: "Every order item must have a valid product" });
+}
+
+const products = await prisma.product.findMany({
+  where: { id: { in: productIds as string[] } },
+  select: { id: true, sellerId: true, status: true },
+});
+
+const productsById = new Map(products.map((product) => [product.id, product]));
+
+for (const item of items as { productId: string }[]) {
+  const product = productsById.get(item.productId);
+
+  if (!product || product.status !== "approved") {
+    return res.status(400).json({
+      message: "A product in your cart is no longer available",
+    });
+  }
+
+  if (product.sellerId === userId) {
+    return res.status(403).json({
+      message: "You can't purchase your own product",
+    });
+  }
+}
+
     if (!shippingAddress || !paymentMethod || subtotal === undefined) {
       return res.status(400).json({ message: 'Missing required order fields' })
     }

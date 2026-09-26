@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { protect, isAdmin } from "../middleware/authMiddleware";
+import { protect } from "../middleware/authMiddleware";
 import multer from "multer";
 import { uploadImage } from "../controllers/uploadController";
 
@@ -11,6 +11,6 @@ const upload = multer({
 
 const router = Router();
 
-router.post("/", protect, isAdmin, upload.single("image"), uploadImage);
+router.post("/", protect, upload.single("image"), uploadImage);
 
 export default router;
